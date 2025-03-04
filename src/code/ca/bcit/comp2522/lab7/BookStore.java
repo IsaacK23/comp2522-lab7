@@ -67,7 +67,10 @@ class BookStore<T extends Literature>
     private static <T extends Literature> void fillBookMap(final Map<String, T> novelsMap,
                                                            final List<T>        inventory)
     {
-        for(final T book : inventory)
+        //todo changed this to lambda with forEach
+
+        final Consumer<T> addToMap;
+        addToMap = (book)->
         {
             if(book != null)
             {
@@ -75,7 +78,9 @@ class BookStore<T extends Literature>
                 title = book.getTitle();
                 novelsMap.put(title, book);
             }
-        }
+        };
+
+        inventory.forEach(addToMap);
     }
 
     /**
@@ -105,13 +110,18 @@ class BookStore<T extends Literature>
      */
     final void printItems()
     {
-        for(final T book : inventory)
+        //todo changed this to a lambda for a forEach
+        final Consumer<T> print;
+
+        print = (book) ->
         {
             if(book != null)
             {
                 System.out.println(book.getTitle());
             }
-        }
+        };
+
+        inventory.forEach(print);
     }
 
 
@@ -120,13 +130,17 @@ class BookStore<T extends Literature>
      */
     final void printAllTitles()
     {
-        for(final T book : inventory)
+        final Consumer<T> printUpperCase;
+
+        printUpperCase = (book) ->
         {
             if(book != null)
             {
                 System.out.println(book.getTitle().toUpperCase());
             }
-        }
+        };
+
+        inventory.forEach(printUpperCase);
     }
 
     /**
@@ -161,13 +175,17 @@ class BookStore<T extends Literature>
         final List<String> sortedTitles;
         sortedTitles = new ArrayList<>();
 
-        for(final T book : inventory)
+        final Consumer<T> addToSortedTitlesList;
+
+        addToSortedTitlesList = (book) ->
         {
             if(book != null)
             {
                 sortedTitles.add(book.getTitle());
             }
-        }
+        };
+
+        inventory.forEach(addToSortedTitlesList);
 
         sortedTitles.sort(String::compareToIgnoreCase);
 
@@ -192,7 +210,9 @@ class BookStore<T extends Literature>
 
         validateYear(decade);
 
-        for(final T book : inventory)
+        final Consumer<T> printIfWithinDecade;
+
+        printIfWithinDecade = (book) ->
         {
             if(book != null)
             {
@@ -203,7 +223,9 @@ class BookStore<T extends Literature>
                     System.out.println(book.getTitle());
                 }
             }
-        }
+        };
+
+        inventory.forEach(printIfWithinDecade);
     }
 
     /*
@@ -229,6 +251,8 @@ class BookStore<T extends Literature>
         if(!inventory.isEmpty())
         {
             longestTitle = inventory.getFirst().getTitle();
+
+            //todo come back and see if we can make this not this loop
             for(final T book : inventory)
             {
                 if(book != null && book.getTitle().length() > longestTitle.length())
@@ -238,6 +262,8 @@ class BookStore<T extends Literature>
             }
         }
         System.out.println(longestTitle);
+
+
     }
 
     /**
@@ -250,6 +276,7 @@ class BookStore<T extends Literature>
         boolean bookWrittenInYear;
         bookWrittenInYear = false;
 
+        //todo check if this can be lambda later
         for (final T book : inventory)
         {
             if (book != null && book.getYearPublished() == year)
@@ -362,14 +389,18 @@ class BookStore<T extends Literature>
     {
         final List<T> booksCorrectLength;
         booksCorrectLength = new ArrayList<>();
+        //todo check if name is good / whatever time pressure aaaaaaaaaaaaaaaa
+        final Consumer<T> checkIfDesiredLength;
 
-        for (final T book : inventory)
+        checkIfDesiredLength = (book) ->
         {
             if (book != null && book.getTitle().length() == desiredTitleLength)
             {
                 booksCorrectLength.add(book);
             }
-        }
+        };
+
+        inventory.forEach(checkIfDesiredLength);
 
         return booksCorrectLength;
     }
@@ -440,6 +471,7 @@ class BookStore<T extends Literature>
      */
     void addNovelsToCollection(final List<? super Novel> novelCollection)
     {
+        //todo make not for : loop
         for (final T item : inventory)
         {
             if (item instanceof Novel novel)
@@ -456,6 +488,7 @@ class BookStore<T extends Literature>
      */
     void addComicsToCollection(final List<? super ComicBook> comicCollection)
     {
+        //todo make not for : loop
         for (final T item : inventory)
         {
             if (item instanceof ComicBook comic)
@@ -482,6 +515,31 @@ class BookStore<T extends Literature>
     }
 
     /**
+     * todo new thing from part B
+     * Prints books filtered by the specified filter
+     *
+     * @param filter as the filter
+     */
+    public void printBooks(final BookFilter filter, final List<Book> books)
+    {
+        //todo make this forEach
+//        for(final Book book : books)
+//        {
+//            if(filter.filter(book))
+//            {
+//                System.out.println(book);
+//            }
+//        }
+
+        books.forEach(book -> {
+            if(filter.filter(book))
+            {
+                System.out.println(book);
+            }
+        });
+    }
+
+    /**
      * Drives the program.
      * @param args unused.
      */
@@ -494,7 +552,8 @@ class BookStore<T extends Literature>
         final List<ComicBook>       comicCollection;
         final List<Magazine>        zineCollection;
 
-        final List<Literature> books = new ArrayList<>();
+        //todo changed the List from Literature to Book
+        final List<Book> books = new ArrayList<>();
 
         novelCollection = new ArrayList<>();
         comicCollection = new ArrayList<>();
@@ -502,7 +561,7 @@ class BookStore<T extends Literature>
 
         final Novel theAdventuresOfAugieMarch;
         final Novel allTheKingsMen;
-        final Literature americanPastoral;
+        final Novel americanPastoral;
         final ComicBook ironMan;
         final Magazine newYorkTimes;
         final Novel androids;
@@ -602,18 +661,15 @@ class BookStore<T extends Literature>
             System.out.println(zine.getTitle());
         }
 
-        bookstore.inventory.sort(new Comparator<Literature>() {
-            @Override
-            public int compare(final Literature o1,
-                               final Literature o2)
-            {
-                return Integer.compare(o1.getTitle().length(),
-                                       o2.getTitle().length());
-            }
-        });
+        //todo this was part 1 maybe it should sort inventory instead of books
+        books.sort((b1, b2) -> b1.getTitle().compareTo(b2.getTitle()));
 
         System.out.println("\nTitles Sorted by Length:");
-        bookstore.printItems();
+        books.forEach(System.out::println);
+
+        //todo new thing from part B / maybe remove magic number in print and other thing
+        System.out.println("\nTitles published before 1950:");
+        bookstore.printBooks(book -> book.getYearPublished() < 1950, books);
     }
 
     /**
