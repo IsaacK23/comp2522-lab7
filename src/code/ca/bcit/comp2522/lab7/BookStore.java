@@ -3,7 +3,6 @@ package ca.bcit.comp2522.lab7;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * A class that simulates a bookstore holding novels as well as
@@ -26,8 +25,9 @@ class BookStore<T extends Literature>
     private static final int INITIAL_NUM_BOOKS_FOUND = 1;
     private static final int INCREMENT_BY_ONE        = 1;
     private static final int DEFAULT_INVALID_YEAR    = 0;
-    private static final int NOTHING    = 0;
-    private static final int INITIAL_AVERAGE_LENGTH    = 0;
+    private static final int NOTHING                 = 0;
+    private static final int INITIAL_AVERAGE_LENGTH  = 0;
+    private static final int CUTOFF_YEAR             = 1950;
 
     private final String         storeName;
     private final List<T>        inventory;
@@ -122,7 +122,7 @@ class BookStore<T extends Literature>
         {
             if(book != null)
             {
-                System.out.println(book.getTitle());
+                System.out.println(book.getTitle()); // todo format it "nicely"
             }
         };
 
@@ -675,9 +675,9 @@ class BookStore<T extends Literature>
         books.forEach(System.out::println);
 
         //todo new thing from part B / maybe remove magic number in print and other thing
-        System.out.println("\nTitles published before 1950:");
+        System.out.printf("\nTitles published before %d:\n", CUTOFF_YEAR);
         //bookstore.printBooks(book -> book.getYearPublished() < 1950, books);
-        Predicate<Literature> oldBooks = book -> book.getYearPublished() < 1950;
+        Predicate<Literature> oldBooks = book -> book.getYearPublished() < CUTOFF_YEAR;
         bookstore.printBooks(oldBooks::test, books);
 
         System.out.println("\nBefore sort:");
@@ -689,10 +689,16 @@ class BookStore<T extends Literature>
         System.out.println("\nAverage title length:");
         System.out.println(stats.getAverageTitleLength());
 
-//        Supplier<Novel> bookSupplier = Novel::new;
+        //todo figure this out (step 5)
+//        Supplier<Book> bookSupplier = Book::new;
 //
-//        Book newBook = bookSupplier.apply("Hello", "Test", 1999);
 //        Book newBook = bookSupplier.get();
+//        System.out.println(newBook);
+//
+//        Supplier<Novel> novelSupplier = Novel::new;
+//        Novel newNovel = novelSupplier.get();
+//        System.out.println(newNovel);
+
     }
 
     /**

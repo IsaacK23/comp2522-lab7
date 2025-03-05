@@ -6,7 +6,7 @@ package ca.bcit.comp2522.lab7;
  * @author Alison Kim
  * @version 1.0
  */
-abstract class Book extends Literature implements Comparable<Book>
+class Book extends Literature implements Comparable<Book>
 {
     private static final int MIN_YEAR_PUBLISHED = 1;
     private static final int CURRENT_YEAR = 2025;
@@ -28,6 +28,13 @@ abstract class Book extends Literature implements Comparable<Book>
         this.title = title;
         this.yearPublished = yearPublished;
     }
+
+    //todo figure this out (step 5)
+//    Book()
+//    {
+//        title = null;
+//        yearPublished = 1;
+//    }
 
     /*
      * Validates that the title is not null or blank.

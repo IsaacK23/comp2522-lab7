@@ -27,6 +27,12 @@ class Novel extends Book
         this.authorName = authorName;
     }
 
+    //todo figure this out (step 5)
+//    Novel()
+//    {
+//        authorName = null;
+//    }
+
     /*
      * validates that the author's name is not null or blank.
      * @param authorName the name of the author.
