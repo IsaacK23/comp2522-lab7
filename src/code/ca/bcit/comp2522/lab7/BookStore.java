@@ -2,6 +2,8 @@ package ca.bcit.comp2522.lab7;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * A class that simulates a bookstore holding novels as well as
@@ -9,7 +11,8 @@ import java.util.function.Consumer;
  * @author Jonny Twist
  * @author Aaron Tsang
  * @author Alison Kim
- * @version 2.0
+ * @author Isaac Kehler
+ * @version 3.0
  */
 class BookStore<T extends Literature>
 {
@@ -23,6 +26,8 @@ class BookStore<T extends Literature>
     private static final int INITIAL_NUM_BOOKS_FOUND = 1;
     private static final int INCREMENT_BY_ONE        = 1;
     private static final int DEFAULT_INVALID_YEAR    = 0;
+    private static final int NOTHING    = 0;
+    private static final int INITIAL_AVERAGE_LENGTH    = 0;
 
     private final String         storeName;
     private final List<T>        inventory;
@@ -388,9 +393,9 @@ class BookStore<T extends Literature>
     final List<T> getBooksThisLength(final int desiredTitleLength)
     {
         final List<T> booksCorrectLength;
-        booksCorrectLength = new ArrayList<>();
-        //todo check if name is good / whatever time pressure aaaaaaaaaaaaaaaa
         final Consumer<T> checkIfDesiredLength;
+
+        booksCorrectLength = new ArrayList<>();
 
         checkIfDesiredLength = (book) ->
         {
@@ -471,14 +476,17 @@ class BookStore<T extends Literature>
      */
     void addNovelsToCollection(final List<? super Novel> novelCollection)
     {
-        //todo make not for : loop
-        for (final T item : inventory)
+        final Consumer<T> addNovelsToCollection;
+
+        addNovelsToCollection = (book) ->
         {
-            if (item instanceof Novel novel)
+            if (book instanceof Novel novel)
             {
                 novelCollection.add(novel);
             }
-        }
+        };
+
+        inventory.forEach(addNovelsToCollection);
     }
 
     /**
@@ -488,14 +496,18 @@ class BookStore<T extends Literature>
      */
     void addComicsToCollection(final List<? super ComicBook> comicCollection)
     {
-        //todo make not for : loop
-        for (final T item : inventory)
+        final Consumer<T> addComicsToCollection;
+
+        addComicsToCollection = (book) ->
         {
-            if (item instanceof ComicBook comic)
+            if (book instanceof ComicBook comic)
             {
                 comicCollection.add(comic);
             }
-        }
+        };
+
+        inventory.forEach(addComicsToCollection);
+
     }
 
     /**
@@ -505,34 +517,29 @@ class BookStore<T extends Literature>
      */
     void addMagazinesToCollection(final List<? super Magazine> zineCollection)
     {
-        for (final T item : inventory)
+        final Consumer<T> addZinesToCollection;
+
+        addZinesToCollection = (book) ->
         {
-            if (item instanceof Magazine zine)
+            if (book instanceof Magazine zine)
             {
                 zineCollection.add(zine);
             }
-        }
+        };
+
+        inventory.forEach(addZinesToCollection);
     }
 
     /**
-     * todo new thing from part B
+     * todo new thing from part B -
      * Prints books filtered by the specified filter
      *
      * @param filter as the filter
      */
-    public void printBooks(final BookFilter filter, final List<Book> books)
+    public void printBooks(final Predicate<Literature> filter, final List<Literature> books)
     {
-        //todo make this forEach
-//        for(final Book book : books)
-//        {
-//            if(filter.filter(book))
-//            {
-//                System.out.println(book);
-//            }
-//        }
-
         books.forEach(book -> {
-            if(filter.filter(book))
+            if(filter.test(book))
             {
                 System.out.println(book);
             }
@@ -552,8 +559,7 @@ class BookStore<T extends Literature>
         final List<ComicBook>       comicCollection;
         final List<Magazine>        zineCollection;
 
-        //todo changed the List from Literature to Book
-        final List<Book> books = new ArrayList<>();
+        final List<Literature> books = new ArrayList<>();
 
         novelCollection = new ArrayList<>();
         comicCollection = new ArrayList<>();
@@ -643,6 +649,7 @@ class BookStore<T extends Literature>
         System.out.println("\nAverage Title Length:");
         System.out.println(stats.averageTitleLength());
 
+        //todo make method reference or lambda
         System.out.println("\nAll Novels:");
         for (final Novel novel : novelCollection)
         {
@@ -669,7 +676,23 @@ class BookStore<T extends Literature>
 
         //todo new thing from part B / maybe remove magic number in print and other thing
         System.out.println("\nTitles published before 1950:");
-        bookstore.printBooks(book -> book.getYearPublished() < 1950, books);
+        //bookstore.printBooks(book -> book.getYearPublished() < 1950, books);
+        Predicate<Literature> oldBooks = book -> book.getYearPublished() < 1950;
+        bookstore.printBooks(oldBooks::test, books);
+
+        System.out.println("\nBefore sort:");
+        bookstore.printItems();
+        stats.sortByTitle();
+        System.out.println("\nAfter sort: ");
+        bookstore.printItems();
+
+        System.out.println("\nAverage title length:");
+        System.out.println(stats.getAverageTitleLength());
+
+//        Supplier<Novel> bookSupplier = Novel::new;
+//
+//        Book newBook = bookSupplier.apply("Hello", "Test", 1999);
+//        Book newBook = bookSupplier.get();
     }
 
     /**
@@ -760,25 +783,59 @@ class BookStore<T extends Literature>
             return mostCommonPublishYear;
         }
 
+        /**
+         * Fills a Map with years as the key and the number of books published
+         * that year as the value.
+         * @param yearCounter the Map to be filled.
+         */
         private void fillMapFromInventory(final Map<Integer, Integer> yearCounter)
         {
-            for(final T item : inventory)
+            final Consumer<T> countNumberOfBooksPerYear;
+
+            countNumberOfBooksPerYear = (book) ->
             {
-                if(item != null)
+                if(book != null)
                 {
                     //year exists in map already
-                    if (yearCounter.get(item.getYearPublished()) != null)
+                    if (yearCounter.get(book.getYearPublished()) != null)
                     {
-                        int n = yearCounter.get(item.getYearPublished()) + INCREMENT_BY_ONE;
-                        yearCounter.put(item.getYearPublished(), n);
+                        final int n = yearCounter.get(book.getYearPublished()) + INCREMENT_BY_ONE;
+                        yearCounter.put(book.getYearPublished(), n);
                     }
                     // year does not exist in map
                     else
                     {
-                        yearCounter.put(item.getYearPublished(), INITIAL_NUM_BOOKS_FOUND);
+                        yearCounter.put(book.getYearPublished(), INITIAL_NUM_BOOKS_FOUND);
                     }
                 }
-            }
+            };
+
+            inventory.forEach(countNumberOfBooksPerYear);
         }
+
+        /**
+         * Sorts a list of books by their title.
+         */
+        public void sortByTitle()
+        {
+            inventory.sort(Comparator.comparing(Literature::getTitle));
+        }
+
+        /**
+         * Gets the average title length of the bookstore's inventory.
+         * @return the average title length.
+         */
+        public double getAverageTitleLength()
+        {
+            int totalLength;
+            totalLength = INITIAL_AVERAGE_LENGTH;
+
+            for(final Literature book : inventory)
+            {
+                totalLength += book.getTitle().length();
+            }
+            return(!inventory.isEmpty()) ? (double) totalLength / inventory.size() : NOTHING;
+        }
+
     }
 }
