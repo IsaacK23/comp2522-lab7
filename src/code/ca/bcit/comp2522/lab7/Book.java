@@ -4,15 +4,18 @@ package ca.bcit.comp2522.lab7;
  * Represents a book.
  * @author Jonny Twist
  * @author Alison Kim
- * @version 1.0
+ * @author Isaac Kehler
+ * @version 2.0
  */
 class Book extends Literature implements Comparable<Book>
 {
-    private static final int MIN_YEAR_PUBLISHED = 1;
-    private static final int CURRENT_YEAR = 2025;
+    private static final int    MIN_YEAR_PUBLISHED     = 1;
+    private static final int    CURRENT_YEAR           = 2025;
+    private static final String DEFAULT_TITLE          = "Untitled";
+    private static final int    DEFAULT_YEAR_PUBLISHED = CURRENT_YEAR;
 
     private final String title;
-    private final int yearPublished;
+    private final int    yearPublished;
 
     /**
      * Constructs a Book.
@@ -25,16 +28,19 @@ class Book extends Literature implements Comparable<Book>
         validateTitle(title);
         validateYearPublished(yearPublished);
 
-        this.title = title;
+        this.title         = title;
         this.yearPublished = yearPublished;
     }
 
-    //todo figure this out (step 5)
-//    Book()
-//    {
-//        title = null;
-//        yearPublished = 1;
-//    }
+    /**
+     * Parameterless constructor for a Book.
+     * Assigns default values for all instance variables.
+     */
+    Book()
+    {
+        title         = DEFAULT_TITLE;
+        yearPublished = DEFAULT_YEAR_PUBLISHED;
+    }
 
     /*
      * Validates that the title is not null or blank.

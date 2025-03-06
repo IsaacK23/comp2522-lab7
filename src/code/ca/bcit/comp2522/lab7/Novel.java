@@ -4,10 +4,13 @@ package ca.bcit.comp2522.lab7;
  * A class to define what a novel contains and how it should be printed.
  * @author Jonny Twist
  * @author Aaron Tsang
- * @version 1.0
+ * @author Isaac Kehler
+ * @version 2.0
  */
 class Novel extends Book
 {
+
+    private static final String DEFAULT_AUTHOR = "Anonymous";
 
     private final String authorName;
 
@@ -27,11 +30,14 @@ class Novel extends Book
         this.authorName = authorName;
     }
 
-    //todo figure this out (step 5)
-//    Novel()
-//    {
-//        authorName = null;
-//    }
+    /**
+     * Parameterless constructor for a Novel.
+     * Assigns default values for all instance variables.
+     */
+    Novel()
+    {
+        authorName = DEFAULT_AUTHOR;
+    }
 
     /*
      * validates that the author's name is not null or blank.

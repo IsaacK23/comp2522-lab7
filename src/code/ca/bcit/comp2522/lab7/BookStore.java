@@ -3,6 +3,7 @@ package ca.bcit.comp2522.lab7;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * A class that simulates a bookstore holding novels as well as
@@ -28,6 +29,7 @@ class BookStore<T extends Literature>
     private static final int NOTHING                 = 0;
     private static final int INITIAL_AVERAGE_LENGTH  = 0;
     private static final int CUTOFF_YEAR             = 1950;
+    private static final String NICE_FORMATTING      = "\t";
 
     private final String         storeName;
     private final List<T>        inventory;
@@ -72,8 +74,6 @@ class BookStore<T extends Literature>
     private static <T extends Literature> void fillBookMap(final Map<String, T> novelsMap,
                                                            final List<T>        inventory)
     {
-        //todo changed this to lambda with forEach
-
         final Consumer<T> addToMap;
         addToMap = (book)->
         {
@@ -115,14 +115,13 @@ class BookStore<T extends Literature>
      */
     final void printItems()
     {
-        //todo changed this to a lambda for a forEach
         final Consumer<T> print;
 
         print = (book) ->
         {
             if(book != null)
             {
-                System.out.println(book.getTitle()); // todo format it "nicely"
+                System.out.println(NICE_FORMATTING + book.getTitle());
             }
         };
 
@@ -141,7 +140,7 @@ class BookStore<T extends Literature>
         {
             if(book != null)
             {
-                System.out.println(book.getTitle().toUpperCase());
+                System.out.println(NICE_FORMATTING + book.getTitle().toUpperCase());
             }
         };
 
@@ -164,7 +163,7 @@ class BookStore<T extends Literature>
                         .contains(substring.toLowerCase());
                 if(containsSubstring)
                 {
-                    System.out.println(item.getTitle());
+                    System.out.println(NICE_FORMATTING + item.getTitle());
                 }
             };
 
@@ -198,7 +197,7 @@ class BookStore<T extends Literature>
         print = (title) -> {
             if(title != null)
             {
-                System.out.println(title);
+                System.out.println(NICE_FORMATTING + title);
             }
         };
 
@@ -225,7 +224,7 @@ class BookStore<T extends Literature>
                 year = book.getYearPublished();
                 if(year >= decade && year < decade + DECADE_UPPER_BOUND)
                 {
-                    System.out.println(book.getTitle());
+                    System.out.println(NICE_FORMATTING + book.getTitle());
                 }
             }
         };
@@ -257,7 +256,6 @@ class BookStore<T extends Literature>
         {
             longestTitle = inventory.getFirst().getTitle();
 
-            //todo come back and see if we can make this not this loop
             for(final T book : inventory)
             {
                 if(book != null && book.getTitle().length() > longestTitle.length())
@@ -278,18 +276,22 @@ class BookStore<T extends Literature>
      */
     final boolean isThereABookWrittenIn(final int year)
     {
-        boolean bookWrittenInYear;
-        bookWrittenInYear = false;
+//        boolean bookWrittenInYear;
+//        bookWrittenInYear = false;
+//
+//        //todo If were not allowed to use streams here uncomment this code and remove stream
+//        for (final T book : inventory)
+//        {
+//            if (book != null && book.getYearPublished() == year)
+//            {
+//                bookWrittenInYear = true;
+//                break;
+//            }
+//        }
 
-        //todo check if this can be lambda later
-        for (final T book : inventory)
-        {
-            if (book != null && book.getYearPublished() == year)
-            {
-                bookWrittenInYear = true;
-                break;
-            }
-        }
+        final boolean bookWrittenInYear = inventory.stream()
+                .filter(Objects::nonNull)
+                .anyMatch(b-> b.getYearPublished() == year);
 
         return bookWrittenInYear;
     }
@@ -531,7 +533,6 @@ class BookStore<T extends Literature>
     }
 
     /**
-     * todo new thing from part B -
      * Prints books filtered by the specified filter
      *
      * @param filter as the filter
@@ -559,11 +560,17 @@ class BookStore<T extends Literature>
         final List<ComicBook>       comicCollection;
         final List<Magazine>        zineCollection;
 
+        final Supplier<Literature> novelSupplier = Novel::new;
+        final Supplier<Literature> zineSupplier  = Magazine::new;
+
         final List<Literature> books = new ArrayList<>();
 
         novelCollection = new ArrayList<>();
         comicCollection = new ArrayList<>();
-        zineCollection = new ArrayList<>();
+        zineCollection  = new ArrayList<>();
+
+        Literature newNovel = novelSupplier.get();
+        Literature newZine  = zineSupplier.get();
 
         final Novel theAdventuresOfAugieMarch;
         final Novel allTheKingsMen;
@@ -649,34 +656,26 @@ class BookStore<T extends Literature>
         System.out.println("\nAverage Title Length:");
         System.out.println(stats.averageTitleLength());
 
-        //todo make method reference or lambda
         System.out.println("\nAll Novels:");
-        for (final Novel novel : novelCollection)
-        {
-            System.out.println(novel.getTitle());
-        }
+        novelCollection.forEach(novel-> System.out.println(NICE_FORMATTING + novel.getTitle()));
 
         System.out.println("\nAll Comic Books:");
-        for (final ComicBook comic : comicCollection)
-        {
-            System.out.println(comic.getTitle());
-        }
+        comicCollection.forEach(comic-> System.out.println(NICE_FORMATTING + comic.getTitle()));
 
         System.out.println("\nAll Magazines:");
-        for (final Magazine zine : zineCollection)
-        {
-            System.out.println(zine.getTitle());
-        }
+        zineCollection.forEach(zine -> System.out.println(NICE_FORMATTING + zine.getTitle()));
 
-        //todo this was part 1 maybe it should sort inventory instead of books
+        System.out.println("\n\nLAB 7 NEW CONTENT STARTS HERE\n");
+
+
         books.sort((b1, b2) -> b1.getTitle().compareTo(b2.getTitle()));
 
-        System.out.println("\nTitles Sorted by Length:");
+        System.out.println("\nTitles Sorted Alphabetically:");
         books.forEach(System.out::println);
 
-        //todo new thing from part B / maybe remove magic number in print and other thing
+        //todo why did we make this then change it >_<
         System.out.printf("\nTitles published before %d:\n", CUTOFF_YEAR);
-        //bookstore.printBooks(book -> book.getYearPublished() < 1950, books);
+        //bookstore.printBooks(book -> book.getYearPublished() < 1950, books); // Got replaced by code right after this
         Predicate<Literature> oldBooks = book -> book.getYearPublished() < CUTOFF_YEAR;
         bookstore.printBooks(oldBooks::test, books);
 
@@ -689,16 +688,9 @@ class BookStore<T extends Literature>
         System.out.println("\nAverage title length:");
         System.out.println(stats.getAverageTitleLength());
 
-        //todo figure this out (step 5)
-//        Supplier<Book> bookSupplier = Book::new;
-//
-//        Book newBook = bookSupplier.get();
-//        System.out.println(newBook);
-//
-//        Supplier<Novel> novelSupplier = Novel::new;
-//        Novel newNovel = novelSupplier.get();
-//        System.out.println(newNovel);
-
+        System.out.println("\nBooks created with constructor reference:");
+        System.out.println(newNovel);
+        System.out.println(newZine);
     }
 
     /**
