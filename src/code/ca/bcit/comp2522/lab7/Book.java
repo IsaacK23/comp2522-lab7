@@ -12,7 +12,8 @@ abstract class Book extends Literature implements Comparable<Book>
     private static final int    MIN_YEAR_PUBLISHED     = 1;
     private static final int    CURRENT_YEAR           = 2025;
     private static final String DEFAULT_TITLE          = "Untitled";
-    private static final int    DEFAULT_YEAR_PUBLISHED = CURRENT_YEAR;
+    //instructor had us change default to 1950 for testing purposes
+    private static final int    DEFAULT_YEAR_PUBLISHED = 1950;
 
     private final String title;
     private final int    yearPublished;

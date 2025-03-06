@@ -560,17 +560,19 @@ class BookStore<T extends Literature>
         final List<ComicBook>       comicCollection;
         final List<Magazine>        zineCollection;
 
-        final Supplier<Literature> novelSupplier = Novel::new;
-        final Supplier<Literature> zineSupplier  = Magazine::new;
+        final Supplier<Literature> novelSupplier;
+        final Supplier<Literature> zineSupplier;
 
         final List<Literature> books = new ArrayList<>();
 
         novelCollection = new ArrayList<>();
         comicCollection = new ArrayList<>();
         zineCollection  = new ArrayList<>();
+        novelSupplier   = Novel::new;
+        zineSupplier    = Magazine::new;
 
-        Literature newNovel = novelSupplier.get();
-        Literature newZine  = zineSupplier.get();
+        final Literature newNovel;
+        final Literature newZine;
 
         final Novel theAdventuresOfAugieMarch;
         final Novel allTheKingsMen;
@@ -578,6 +580,9 @@ class BookStore<T extends Literature>
         final ComicBook ironMan;
         final Magazine newYorkTimes;
         final Novel androids;
+
+        newNovel = novelSupplier.get();
+        newZine  = zineSupplier.get();
 
         theAdventuresOfAugieMarch = new Novel("The Adventures of Augie March",
                                               "Saul Bellow",
