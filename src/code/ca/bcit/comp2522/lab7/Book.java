@@ -7,7 +7,7 @@ package ca.bcit.comp2522.lab7;
  * @author Isaac Kehler
  * @version 2.0
  */
-class Book extends Literature implements Comparable<Book>
+abstract class Book extends Literature implements Comparable<Book>
 {
     private static final int    MIN_YEAR_PUBLISHED     = 1;
     private static final int    CURRENT_YEAR           = 2025;
